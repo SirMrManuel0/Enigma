@@ -1,10 +1,10 @@
 from datetime import datetime
 import random
 import string
+from typing import Tuple
 
 from src.machine.Rotor import Rotor
 from src.machine.Reflector import Reflector
-
 
 
 class EnigmaException(Exception):
@@ -16,6 +16,13 @@ class EnigmaInvalidArgumentException(EnigmaException):
         super().__init__(msg)
         self.argument_given = argument_given
         self.argument_expected = argument_expected
+
+
+class EnigmaDataCorruptionException(EnigmaException):
+    def __init__(self, msg: str, data_given, data_expected):
+        super().__init__(msg)
+        self.data_given = data_given
+        self.data_expected = data_expected
 
 
 class Enigma:
@@ -188,21 +195,31 @@ class Enigma:
         # set the turns of the rotors based on the code
         self._code = code.copy()
         self._rotor1.set_turn(code[2] - 1)
-        self._rotor2.set_turn(code[1] * 26 - 1)
-        self._rotor3.set_turn(code[0] * 26 * 26 - 1)
+        self._rotor2.set_turn((code[1] - 1) * 26)
+        self._rotor3.set_turn((code[0] - 1) * 26 * 26)
 
-    def encrypt_wrapper(self, user: str, hide_code: list[int] = [5, 5, 5]) -> str:
-        user = user.replace(",", "")
-        user = user.replace(".", "")
-        user = user.replace(";", "")
-        user = user.replace(":", "")
-        user = user.replace("'", "")
-        user = user.replace('"', "")
+    def encrypt_wrapper(self, message: str, hide_code: list[int] = [5, 5, 5]) -> str:
+        """
+        This method encrypts a message according to the regulation, which applied to the german army in WW2.
+        It also validates params and raises EnigmaInvalidArgumentException.
+        The message can only consist of english uppercase letters and space ' '.
+        All numbers must be written out. (e.g. 4 -> four)
+        The hide_code is a secondary code, which is used to encrypt the original code. default is [5, 5, 5]
+        :param message:
+        :param hide_code:
+        :return encrypted_message:
+        """
+        message = message.replace(",", "")
+        message = message.replace(".", "")
+        message = message.replace(";", "")
+        message = message.replace(":", "")
+        message = message.replace("'", "")
+        message = message.replace('"', "")
 
         # Argument validation
-        if any([True for c in user if c not in self._table.keys() and c != " "]):
+        if any([True for c in message if c not in self._table.keys() and c != " "]):
             raise EnigmaInvalidArgumentException("The string can only consist of english upper case letters or ' '",
-                                                 user, self._table.keys())
+                                                 message, self._table.keys())
         if len(hide_code) != 3 or any([True for n in hide_code if not isinstance(n, int)]):
             raise EnigmaInvalidArgumentException("The code must be a list of three integer!", hide_code,
                                                  [1, 1, 1])
@@ -214,28 +231,28 @@ class Enigma:
 
         # change string according to the regulation for the german army in WW2
         # replace ' ' with X
-        user = [c for c in user]
-        for i, c in enumerate(user):
+        message = [c for c in message]
+        for i, c in enumerate(message):
             if c == " ":
-                user[i] = "X"
-        s = "".join(user)
+                message[i] = "X"
+        s = "".join(message)
 
         # replace CH with Q
         while s.find("CH") >= 0:
             i = s.find("CH")
-            user[i] = "Q"
-            user.pop(i + 1)
-            s = "".join(user)
+            message[i] = "Q"
+            message.pop(i + 1)
+            s = "".join(message)
 
         # replace CK with Q
         while s.find("CK") >= 0:
             i = s.find("CK")
-            user[i] = "Q"
-            user.pop(i + 1)
-            s = "".join(user)
+            message[i] = "Q"
+            message.pop(i + 1)
+            s = "".join(message)
 
         # encrypt
-        user = self.input_str(s)
+        message = self.input_str(s)
 
         # get the time and set it into the right format HHMM
         now = datetime.now()
@@ -258,12 +275,75 @@ class Enigma:
         # create the call signs so for me these are just 5 random letters
         random_letters = ''.join(random.choices(string.ascii_uppercase, k=5))
 
-        user = random_letters + user
-        header = f"{current_time} - {len(user)} - {"".join(beta_code)} {"".join(alpha_code)} - "
+        body = random_letters + message
+        header = f"{current_time} - {len(body)} - {"".join(beta_code)} {"".join(alpha_code)} - "
 
         # create groups of 5
-        user = ' '.join([user[i:i+5] for i in range(0, len(user), 5)])
+        body = ' '.join([body[i:i + 5] for i in range(0, len(body), 5)])
 
-        user = header + user
+        # add header and body
+        body = header + body
 
-        return user
+        return body
+
+    def decrypt_wrapper(self, message: str) -> tuple[str, str, str, str, str, str]:
+        # Argument valdation
+        if len(message) < 26:
+            raise EnigmaInvalidArgumentException("Only messages which were encrypted adhering to the regulations from "
+                                                 "encrypt_wrapper can be decrypted with this method!",
+                                                 message, "2044 - 8 - EEE OVN - KRHAG YSV")
+
+        if any([True for c in message[22:] if c not in self._table.keys() and c != " "]):
+            raise EnigmaInvalidArgumentException("All characters after the encryption header must be either a "
+                                                 "whitespace ' ' or an english uppercase letter!",
+                                                 message, self._table.keys())
+
+        # splitting header from the message
+        message = message.split(" ")
+        time = message[0]
+        length = message[2]
+        beta_code = message[4]
+        alpha_code = message[5]
+        call_sign = message[7][2:]
+        for i in range(8):
+            message.pop(0)
+
+        message = "".join(message)
+
+        # validating codes and setting alpha code to self._code
+        if any([True for c in beta_code if c not in self._table.keys()]):
+            raise EnigmaDataCorruptionException("The beta code is corrupted! Only uppercase english letters were "
+                                                "expected!", beta_code, self._table.keys())
+
+        if any([True for c in alpha_code if c not in self._table.keys()]):
+            raise EnigmaDataCorruptionException("The alpha code is corrupted! Only uppercase english letters were "
+                                                "expected!", alpha_code, self._table.keys())
+
+        beta_code = [self._table[c] for c in beta_code]
+
+        self.reset()
+        self.set_code(beta_code)
+        temp = []
+        for c in alpha_code:
+            temp.append(self.input_chr(c))
+        alpha_code = temp.copy()
+        del temp
+        alpha_code = [self._table[c] for c in alpha_code]
+
+        self.reset()
+        self.set_code(alpha_code)
+        print(alpha_code)
+        message = self.input_str(message)
+
+        self.reset()
+
+        if len(message) + len(call_sign) + 2 != int(length):
+            raise EnigmaDataCorruptionException("The length of the message and call sign does not match the"
+                                                " expected length! Part of the message got lost!",
+                                                {"len(message)": len(message), "len(call_sign)": len(call_sign)},
+                                                length)
+
+        beta_code = str("".join([self._inverse_table[c] for c in beta_code]))
+        alpha_code = str("".join([self._inverse_table[c] for c in alpha_code]))
+
+        return time, length, beta_code, alpha_code, call_sign, message
