@@ -287,6 +287,14 @@ class Enigma:
         return body
 
     def decrypt_wrapper(self, message: str) -> tuple[str, str, str, str, str, str]:
+        """
+        This method decrypts a message according to the regulation, which applied to the german army in WW2.
+        It also validates params and raises EnigmaInvalidArgumentException and EnigmaDataCorruptionException.
+        The message should be from encrypt_wrapper to be safe. You can also obviously replicate the format, but that is
+        not recommended.
+        :param message:
+        :return:
+        """
         # Argument valdation
         if len(message) < 26:
             raise EnigmaInvalidArgumentException("Only messages which were encrypted adhering to the regulations from "
