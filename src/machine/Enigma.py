@@ -347,3 +347,7 @@ class Enigma:
         alpha_code = str("".join([self._inverse_table[c] for c in alpha_code]))
 
         return time, length, beta_code, alpha_code, call_sign, message
+
+    def __str__(self):
+        return f"Rotor 1: {self._rotor1}\nRotor 2: {self._rotor2}\nRotor 3: {self._rotor3}\nReflector: {self._reflector}\n"\
+               f"code: {self._code}\nplugboard: {self._plugboard}"

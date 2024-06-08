@@ -161,3 +161,6 @@ class Rotor:
 
     def get_position(self):
         return self._position
+
+    def __str__(self):
+        return f"position: {self._position}; kind: {self._type}; ringposition: {self._ringposition}; turn: {self._turn}"

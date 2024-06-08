@@ -31,6 +31,7 @@ class Reflector:
                                          PathsManager.ID.index("Reflector.json"))) as js:
             self._table = json.load(js)["kinds"][kind]
         self._table = {int(k): v for k, v in self._table.items()}
+        self._type = kind
 
     def permutate(self, clear: int) -> int:
         """
@@ -48,3 +49,6 @@ class Reflector:
         # uses the self._table corresponding to the reflector kind to encode clear
         encodedTxt = self._table[clear]
         return encodedTxt
+
+    def __str__(self):
+        return f"kind: {self._type}"
