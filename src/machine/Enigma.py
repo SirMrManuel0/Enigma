@@ -134,6 +134,9 @@ class Enigma:
             raise EnigmaInvalidArgumentException("character is expected to be a english uppercase letter!",
                                                  character, self._table.keys())
 
+        if character in self._plugboard.keys():
+            character = self._plugboard[character]
+
         encrypted = self._table[character]
         encrypted = self._rotor1.permutate(encrypted)
         encrypted = self._rotor2.permutate(encrypted)
@@ -143,31 +146,35 @@ class Enigma:
         encrypted = self._rotor2.inverse_permutate(encrypted)
         encrypted = self._rotor1.inverse_permutate(encrypted)
         encrypted = self._inverse_table[encrypted]
+
+        if encrypted in self._plugboard.keys():
+            encrypted = self._plugboard[encrypted]
+
         if continuos:
             self._rotor1.next_turn()
             self._rotor2.next_turn()
             self._rotor3.next_turn()
         return encrypted
 
-    def input_str(self, string: str, continuos: bool = True) -> str:
+    def input_str(self, message: str, continuos: bool = True) -> str:
         """
         This method encrypts or decrypts a string.
         The string must consist of english uppercase letters only.
         It also validates the params and raises EnigmaInvalidArgumentException.
-        :param string:
+        :param message:
         :param continuos:
         :return:
         """
         # Argument validation
-        if len(string) == 0:
-            raise EnigmaInvalidArgumentException("The string must have a length!", string, "A")
-        if any([True for c in string if c not in self._table.keys()]):
+        if len(message) == 0:
+            raise EnigmaInvalidArgumentException("The string must have a length!", message, "A")
+        if any([True for c in message if c not in self._table.keys()]):
             raise EnigmaInvalidArgumentException("The string must consist of only english uppercase letters!",
-                                                 string, "AAA")
+                                                 message, "AAA")
 
         # put each character into input_chr
         output = ""
-        for c in string:
+        for c in message:
             output += self.input_chr(c)
         if not continuos:
             self.reset()
@@ -357,5 +364,5 @@ class Enigma:
         return time, length, beta_code, alpha_code, call_sign, message
 
     def __str__(self):
-        return f"Rotor 1: {self._rotor1}\nRotor 2: {self._rotor2}\nRotor 3: {self._rotor3}\nReflector: {self._reflector}\n"\
+        return f"Rotor 1: {self._rotor1}\nRotor 2: {self._rotor2}\nRotor 3: {self._rotor3}\nReflector: {self._reflector}\n" \
                f"code: {self._code}\nplugboard: {self._plugboard}"
