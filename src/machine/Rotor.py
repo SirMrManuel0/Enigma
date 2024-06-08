@@ -50,8 +50,9 @@ class Rotor:
         self._type = kind
         self._ringposition = ringposition
         self._turn = 0
-        self._table = {int(k): v for k, v in self._types[kind]}
-        self._inverse_table = {v: int(k) for k, v in self._types[kind]}
+        self._table = {int(k): v for k, v in self._types[kind].items()}
+        self._inverse_table = {v: int(k) for k, v in self._types[kind].items()}
+        self._input = [position, kind, ringposition]
 
     def _increase_clear(self, clear: int) -> int:
         """
@@ -70,10 +71,41 @@ class Rotor:
             t = self._turn // (25 * 25)
             t = t % 26
         clear += t
-        clear = clear % 27
+        if clear > 26:
+            clear -= 26
         if clear == 0:
             clear = 1
         return clear
+
+    def _decrease_encoded(self, encoded: int) -> int:
+        """
+        This method decreases encoded text, which is represented as an int with the range 1 <= n <= 26, based on the
+        self._turn and self._position.
+        :param encoded:
+        :return increased clear:
+        """
+        t = 0
+        if self._position == 1:
+            t = self._turn % 26
+        elif self._position == 2:
+            t = self._turn // 25
+            t = t % 26
+        elif self._position == 3:
+            t = self._turn // (25 * 25)
+            t = t % 26
+        encoded -= t
+        if encoded < 0:
+            encoded = 26 + encoded
+        if encoded == 0:
+            encoded = 26
+        return encoded
+
+    def copy(self):
+        """
+        This method allows for a copy of the object.
+        :return:
+        """
+        return Rotor(self._input[0], self._input[1], self._input[2])
 
     def permutate(self, clear: int) -> int:
         """
@@ -93,7 +125,7 @@ class Rotor:
 
         # uses the self._table corresponding to the rotor kind to encode clear
         encodedTxt = self._table[clear]
-        encodedTxt = self._increase_clear(encodedTxt)
+        encodedTxt = self._decrease_encoded(encodedTxt)
         return encodedTxt
 
     def inverse_permutate(self, clear: int) -> int:
@@ -114,7 +146,7 @@ class Rotor:
 
         # uses the self._inverse_table corresponding to the rotor kind to encode clear
         encodedTxt = self._inverse_table[clear]
-        encodedTxt = self._increase_clear(encodedTxt)
+        encodedTxt = self._decrease_encoded(encodedTxt)
         return encodedTxt
 
     def next_turn(self):
@@ -123,6 +155,9 @@ class Rotor:
         :return:
         """
         self._turn += 1
+
+    def set_turn(self, turn: int):
+        self._turn = turn
 
     def get_position(self):
         return self._position
