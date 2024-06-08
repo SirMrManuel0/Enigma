@@ -21,10 +21,12 @@ class PathsManagerInvalidArgumentException(PathsManagerException):
 
 class PathsManager:
     SUPER_ID = [
-        "Rotor"
+        "Rotor",
+        "Reflector"
     ]
     ID = [
-        "Rotor.json"
+        "Rotor.json",
+        "Reflector.json"
     ]
 
     def __init__(self):

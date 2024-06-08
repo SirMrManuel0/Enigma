@@ -1,5 +1,8 @@
 {
     "Rotor": {
         "Rotor.json": "./res/machine/Rotor.json"
+    },
+    "Reflector": {
+        "Reflector.json": "./res/machine/Reflector.json"
     }
 }
