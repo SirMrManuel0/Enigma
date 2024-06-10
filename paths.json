@@ -1,8 +1,13 @@
 {
     "Rotor": {
-        "Rotor.json": "./res/machine/Rotor.json"
+        "Rotor.json": "res/machine/Rotor.json"
     },
     "Reflector": {
-        "Reflector.json": "./res/machine/Reflector.json"
+        "Reflector.json": "res/machine/Reflector.json"
+    },
+    "Server": {
+        "server.pem": "server/server.pem",
+        "server.log": "log/server.log",
+        "handle.log": "log/handle.log"
     }
 }

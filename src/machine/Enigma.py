@@ -347,7 +347,6 @@ class Enigma:
 
         self.reset()
         self.set_code(alpha_code)
-        print(alpha_code)
         message = self.input_str(message)
 
         self.reset()
