@@ -1,0 +1,101 @@
+/* global variables*/
+:root {
+    /* colors */
+    --color-background: #292D3E;
+    --color-foreground: #A6ACCD;
+    --color-text: #676E95;
+    --color-selection-background: #717CB470;
+    --color-selection-foreground: #FFFFFF;
+    --color-buttons: #303348;
+    --color-second-background: #34324a;
+    --color-disabled: #515772;
+    --color-contrast: #202331;
+    --color-active: #414863;
+    --color-border: #2b2a3e;
+    --color-highlight: #444267;
+    --color-tree: #676E95;
+    --color-notifications: #202331;
+    --color-accent: #ab47bc;
+    --color-excluded-files: #2f2e43;
+    --color-green: #c3e88d;
+    --color-yellow: #ffcb6b;
+    --color-blue: #82aaff;
+    --color-red: #f07178;
+    --color-purple: #c792ea;
+    --color-orange: #f78c6c;
+    --color-cyan: #89ddff;
+    --color-gray: #676E95;
+    --color-white-black: #eeffff;
+    --color-error: #ff5370;
+    --color-comments: #676E95;
+    --color-variables: #eeffff;
+    --color-links: #80cbc4;
+    --color-functions: #82aaff;
+    --color-keywords: #c792ea;
+    --color-tags: #f07178;
+    --color-strings: #c3e88d;
+    --color-operators: #89ddff;
+    --color-attributes: #ffcb6b;
+    --color-numbers: #f78c6c;
+    --color-parameters: #f78c6c;
+}
+
+html {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    height: 10vh;
+    width: 100vw;
+    padding: 0;
+    margin: 0;
+}
+body{
+    height: 40%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+.layOverWrapper{
+    z-index: 9;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--color-selection-background);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.layOverDiv{
+    background-color: var(--color-second-background);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.button{
+    padding: 10px 20px;
+    border-radius: 4px;
+    color: var(--color-foreground);
+    background-color: var(--color-buttons);
+    cursor: pointer;
+}
+.button:active{
+    background-color: var(--color-active);
+}
+.button:hover{
+    background-color: var(--color-highlight);
+}
+.input{
+    padding: 10px;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    margin-right: 10px;
+    color: var(--color-foreground);
+    background-color: var(--color-background);
+}
+.hidden{
+    display: none !important;
+}
+.error{
+    z-index: 12;
+    position: fixed;
+    color: var(--color-error);
+}

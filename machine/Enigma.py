@@ -1,10 +1,9 @@
 from datetime import datetime
 import random
 import string
-from typing import Tuple
 
-from src.machine.Rotor import Rotor
-from src.machine.Reflector import Reflector
+from machine.Rotor import Rotor
+from machine.Reflector import Reflector
 
 
 class EnigmaException(Exception):
@@ -134,10 +133,10 @@ class Enigma:
             raise EnigmaInvalidArgumentException("character is expected to be a english uppercase letter!",
                                                  character, self._table.keys())
 
-        if character in self._plugboard.keys():
-            character = self._plugboard[character]
-
         encrypted = self._table[character]
+        if encrypted in self._plugboard.keys():
+            encrypted = self._plugboard[encrypted]
+
         encrypted = self._rotor1.permutate(encrypted)
         encrypted = self._rotor2.permutate(encrypted)
         encrypted = self._rotor3.permutate(encrypted)
@@ -145,10 +144,11 @@ class Enigma:
         encrypted = self._rotor3.inverse_permutate(encrypted)
         encrypted = self._rotor2.inverse_permutate(encrypted)
         encrypted = self._rotor1.inverse_permutate(encrypted)
-        encrypted = self._inverse_table[encrypted]
 
         if encrypted in self._plugboard.keys():
             encrypted = self._plugboard[encrypted]
+
+        encrypted = self._inverse_table[encrypted]
 
         if continuos:
             self._rotor1.next_turn()

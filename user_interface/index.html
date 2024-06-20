@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enigma</title>
+    <link rel="icon" type="image/x-icon" href="img/icon.png">
+    <link rel="stylesheet" href="css/globals.css">
+    <link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+
+    <div id="gridWrap">
+        <div class="gridChild" id="RotorDiv">
+            <div id="rotorWrapper">
+
+                <div class="rotor" id="reflector">
+                    <button class="button" id="reflectorButton">B</button>
+                </div>
+                <div class="rotor" id="rotor3">
+                    <button class="button" id="switchRotor3">I</button>
+                    <button class="button" id="rotor3ButUp"><img src="img/keyboard_arrow_up.png"></button>
+                    <span id="rotor3Span">A</span>
+                    <button class="button" id="rotor3ButDown"><img src="img/keyboard_arrow_down.png"></button>
+                </div>
+                <div class="rotor" id="rotor2">
+                    <button class="button" id="switchRotor2">I</button>
+                    <button class="button" id="rotor2ButUp"><img src="img/keyboard_arrow_up.png"></button>
+                    <span id="rotor2Span">A</span>
+                    <button class="button" id="rotor2ButDown"><img src="img/keyboard_arrow_down.png"></button>
+                </div>
+                <div class="rotor" id="rotor1">
+                    <button class="button" id="switchRotor1">I</button>
+                    <button class="button" id="rotor1ButUp"><img src="img/keyboard_arrow_up.png"></button>
+                    <span id="rotor1Span">A</span>
+                    <button class="button" id="rotor1ButDown"><img src="img/keyboard_arrow_down.png"></button>
+                </div>
+            </div>
+            
+        </div>
+        <div class="gridChild" id="hDiv">
+            <div id="hDivHolder1"><h1>Enigma</h1></div>
+            <div id="hDivHolder2"></div>
+        </div>
+        <div class="gridChild" id="CodeDiv">
+            <div class="CodeDivChild CodeButton hidden" id="leftButton">
+                <button class="CodeButton"><img src="img/keyboard_arrow_left.png"></button>
+            </div>
+            <div class="CodeDivChild" id="CodeNumDiv"><span id="CodeNum">1</span></div>
+            <div class="CodeDivChild CodeButton" id="rightButton">
+                <button class="CodeButton"><img src="img/keyboard_arrow_right.png"></button>
+            </div>
+        </div>
+        <div class="gridChild Space" id="Space1"></div>
+        <div class="gridChild" id="plugboard">
+            <div id="plugboradContainer">
+                <button id="plus-button">+</button>
+                <div>
+                    <span id="plug1"></span>
+                    <span id="plug2"></span>
+                    <span id="plug3"></span>
+                    <span id="plug4"></span>
+                    <span id="plug5"></span>
+                    <span id="plug6"></span>
+                    <span id="plug7"></span>
+                    <span id="plug8"></span>
+                    <span id="plug9"></span>
+                    <span id="plug10"></span>
+                </div>
+            </div>
+        </div>
+        <div class="gridChild" id="ResponseDiv">
+            <div class="message-box">
+                <textarea id="message-output" disabled></textarea>
+            </div>
+        </div>
+        <div class="gridChild Space" id="Space2"></div>
+        <div class="gridChild" id="MessageDiv">
+            <div class="message-box">
+                <textarea id="message-input" placeholder="Type your message here..."></textarea>
+                <button class="button" id="send-button"><img src="img/send.png"></button>
+            </div>
+        </div>
+    </div>
+    <div class="layOverWrapper hidden error" id="errorMessageWrapper" onclick="removeError()">
+        <div class="layOverDiv" id="errorMessageDiv">
+            <span id="errorMessage"></span>
+        </div>
+    </div>
+    </div>
+    <div class="layOverWrapper hidden info" id="infoMessageWrapper" onclick="removeInfo()">
+        <div class="layOverDiv" id="infoMessageDiv">
+            <span id="infoMessage"></span>
+        </div>
+    </div>
+    <div class="layOverWrapper hidden plugboard" id="plugboardHoverWrapper">
+        <div class="layOverDiv">
+            <div id="containerHoverPlug">
+                <h2>Connect Two Letters for the plugboard</h2>
+                <div id="inner-containerHoverPlug"></div>
+            </div>
+        </div>
+    </div>
+    <div class="layOverWrapper hidden rotor1Over" id="rotor1HoverWrapper">
+        <div class="layOverDiv selector-rotor-div">
+            <button class="button" id="rotor1-select-I">I</button>
+            <button class="button" id="rotor1-select-II">II</button>
+            <button class="button" id="rotor1-select-III">III</button>
+            <button class="button" id="rotor1-select-IV">IV</button>
+            <button class="button" id="rotor1-select-V">V</button>
+            <button class="button" id="rotor1-select-VI">VI</button>
+            <button class="button" id="rotor1-select-VII">VII</button>
+            <button class="button" id="rotor1-select-VIII">VIII</button>
+        </div>
+    </div>
+    <div class="layOverWrapper hidden rotor2Over" id="rotor2HoverWrapper">
+        <div class="layOverDiv selector-rotor-div">
+            <button class="button" id="rotor2-select-I">I</button>
+            <button class="button" id="rotor2-select-II">II</button>
+            <button class="button" id="rotor2-select-III">III</button>
+            <button class="button" id="rotor2-select-IV">IV</button>
+            <button class="button" id="rotor2-select-V">V</button>
+            <button class="button" id="rotor2-select-VI">VI</button>
+            <button class="button" id="rotor2-select-VII">VII</button>
+            <button class="button" id="rotor2-select-VIII">VIII</button>
+        </div>
+    </div>
+    <div class="layOverWrapper hidden rotor3Over" id="rotor3HoverWrapper">
+        <div class="layOverDiv selector-rotor-div">
+            <button class="button" id="rotor3-select-I">I</button>
+            <button class="button" id="rotor3-select-II">II</button>
+            <button class="button" id="rotor3-select-III">III</button>
+            <button class="button" id="rotor3-select-IV">IV</button>
+            <button class="button" id="rotor3-select-V">V</button>
+            <button class="button" id="rotor3-select-VI">VI</button>
+            <button class="button" id="rotor3-select-VII">VII</button>
+            <button class="button" id="rotor3-select-VIII">VIII</button>
+        </div>
+    </div>
+    <div class="layOverWrapper hidden reflectorOver" id="reflectorHoverWrapper">
+        <div class="layOverDiv selector-rotor-div">
+            <button class="button" id="reflector-select-B">B</button>
+            <button class="button" id="reflector-select-C">C</button>
+        </div>
+    </div>
+    <div class="layOverWrapper hidden betaOver" id="betaCodeHoverWrapper">
+        <div class="layOverDiv beta-code-div">
+            <span>Input 3 uppercase english letters! (e.g. 'ACC')</span>
+            <div id="beta-code-box">
+                <textarea id="beta-code-input" placeholder="HGU" rows="1" cols="3"></textarea>
+                <button class="button" id="beta-button"><img src="img/send.png"></button>
+            </div>
+        </div>
+    </div>
+    <script src="js/global.js"></script>
+</body>
+</html>

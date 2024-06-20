@@ -23,14 +23,15 @@ class PathsManager:
     SUPER_ID = [
         "Rotor",
         "Reflector",
-        "Server"
+        "Server",
+        "Main"
     ]
     ID = [
         "Rotor.json",
         "Reflector.json",
-        "server.pem",
         "server.log",
-        "handle.log"
+        "handle.log",
+        "global.js"
     ]
 
     def __init__(self):

@@ -1,5 +1,5 @@
 import json
-from src.supply.PathsManager import PathsManager
+from supply.PathsManager import PathsManager
 
 
 class ReflectorException(Exception):

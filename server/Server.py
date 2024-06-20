@@ -4,10 +4,10 @@ import json
 import string
 import random
 
-from src.supply.PathsManager import PathsManager
-from src.machine.Enigma import Enigma, EnigmaException
-from src.machine.Rotor import Rotor, RotorException
-from src.machine.Reflector import Reflector, ReflectorException
+from supply.PathsManager import PathsManager
+from machine.Enigma import Enigma, EnigmaException
+from machine.Rotor import Rotor, RotorException
+from machine.Reflector import Reflector, ReflectorException
 
 class EnigmaHandler(http.server.BaseHTTPRequestHandler):
     def __init__(self, request, client_address, server):
@@ -25,7 +25,7 @@ class EnigmaHandler(http.server.BaseHTTPRequestHandler):
         if not self._logger.handlers:
             # This stops multiple useless log entries
             fh = logging.FileHandler(
-                PathsManager().getPath(PathsManager.SUPER_ID.index("Server"), PathsManager.ID.index("handle.log"))
+                PathsManager().getPath(PathsManager.SUPER_ID.index("Server"), PathsManager.ID.index("server.log"))
             )
             fh.setLevel(logging.INFO)
 
@@ -59,7 +59,6 @@ class EnigmaHandler(http.server.BaseHTTPRequestHandler):
         content_length = int(self.headers['Content-Length'])
         post_data = self.rfile.read(content_length)
         data = json.loads(post_data)
-
         # creating rotor1, rotor2, rotor3, reflector variables to prevent errors later on
         rotor1 = rotor2 = rotor3 = reflector = None
         # error dict to send errors to the website
@@ -99,7 +98,7 @@ class EnigmaHandler(http.server.BaseHTTPRequestHandler):
         try:
             # create Enigma-Object
             enigma = Enigma(rotor1, rotor2, rotor3, reflector, plugboard)
-
+            enigma.set_code(data["alpha_code"])
             # call the correct method based on the user preference
             if data["code"] == 0:
                 # standard en- and decrypting of a message using the enigma
@@ -115,10 +114,14 @@ class EnigmaHandler(http.server.BaseHTTPRequestHandler):
                 header = f"{time} - {len(body)} - {"".join(beta_code)} {"".join(alpha_code)} - "
                 body = ' '.join([body[i:i + 5] for i in range(0, len(body), 5)])
                 processed_message = header + body
+            if data["code"] == 3:
+                processed_message = enigma.input_str(msg)
 
         except EnigmaException as e:
             # Catch error and save it
             error["EnigmaErr"] = e.__str__()
+            self._logger.error(e)
+        except Exception as e:
             self._logger.error(e)
 
         # wrap the response up

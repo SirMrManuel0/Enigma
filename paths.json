@@ -9,5 +9,8 @@
         "server.pem": "server/server.pem",
         "server.log": "log/server.log",
         "handle.log": "log/handle.log"
+    },
+    "Main": {
+        "global.js": "user_interface/js/global.js"
     }
 }

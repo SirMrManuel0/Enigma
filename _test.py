@@ -1,7 +1,5 @@
-from src.machine.Rotor import Rotor
-from src.machine.Reflector import Reflector
-from src.machine.Enigma import Enigma
-from src.machine.Enigma import EnigmaInvalidArgumentException
+from machine.Rotor import Rotor
+from machine.Enigma import Enigma
 
 enigma = Enigma(Rotor(1, "I", 1), Rotor(2, "II", 1), Rotor(3, "III", 1))
 #print(enigma.input_chr("A", False))
